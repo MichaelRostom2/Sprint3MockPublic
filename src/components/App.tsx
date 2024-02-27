@@ -1,8 +1,14 @@
+import REPL from "./REPL";
+
 /**
  * This is the highest level component!
  */
 function App() {
-  return <p>hello</p>;
+  return (
+    <div>
+      <REPL />
+    </div>
+  );
 }
 
 export default App;
