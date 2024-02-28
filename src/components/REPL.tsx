@@ -3,38 +3,40 @@ import "../styles/main.css";
 import { REPLHistory } from "./REPLHistory";
 import { REPLInput } from "./REPLInput";
 
-/* 
-  You'll want to expand this component (and others) for the sprints! Remember 
-  that you can pass "props" as function arguments. If you need to handle state 
-  at a higher level, just move up the hooks and pass the state/setter as a prop.
-  
-  This is a great top level component for the REPL. It's a good idea to have organize all components in a component folder.
-  You don't need to do that for this gearup.
-*/
 export default function REPL() {
-  // TODO: Add some kind of shared state that holds all the commands submitted.
-  const [commandHistory, setcommandHistory] = useState<string[]>([]);
-  const [resultHistory, setresultHistory] = useState<string[]>([]);
-  const [mode, setMode] = useState<string>("");
-  return (
-    <div className="repl">
-      {/*This is where your REPLHistory might go... You also may choose to add it within your REPLInput 
-      component or somewhere else depending on your component organization. What are the pros and cons of each? */}
-      {/* TODO: Update your REPLHistory and REPLInput to take in new shared state as props */}
-      <REPLHistory
-        commandHistory={commandHistory}
-        resultHistory={resultHistory}
-        mode={mode}
-      />
-      <hr></hr>
-      <REPLInput
-        commandHistory={commandHistory}
-        setCommandHistory={setcommandHistory}
-        mode={mode}
-        setMode={setMode}
-        resultHistory={resultHistory}
-        setresultHistory={setresultHistory}
-      />
-    </div>
+  const [History, setHistory] = useState<string[]>([]);
+
+  const [mode, setMode] = useState<string>("brief");
+  const CSVData = new Map();
+  CSVData.set("./data/1.csv", [["test"]]);
+  CSVData.set("./data/2.csv", [["test"]]);
+  CSVData.set("./data/3.csv", [["test"]]);
+
+  const REPLInputVar = (
+    <REPLInput
+      History={History}
+      setHistory={setHistory}
+      mode={mode}
+      setMode={setMode}
+      CSVData={CSVData}
+    />
   );
+  if (History.length === 0) {
+    // emtpy list
+    return (
+      <div>
+        <p>Hello! Enter commands below to use this webpage</p>
+        <p>Enter mode brief to have only results show in history</p>
+        <p>Enter mode verbose to have both command and results show history</p>
+        {REPLInputVar}
+      </div>
+    );
+  } else {
+    return (
+      <div className="repl">
+        <REPLHistory History={History} />
+        {REPLInputVar}
+      </div>
+    );
+  }
 }

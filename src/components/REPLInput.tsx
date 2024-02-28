@@ -3,12 +3,11 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
 
 interface REPLInputProps {
-  commandHistory: string[];
-  setCommandHistory: React.Dispatch<React.SetStateAction<string[]>>;
+  History: string[];
+  setHistory: React.Dispatch<React.SetStateAction<string[]>>;
   mode: string;
   setMode: React.Dispatch<React.SetStateAction<string>>;
-  resultHistory: string[];
-  setresultHistory: React.Dispatch<React.SetStateAction<string[]>>;
+  CSVData: Map<string, string[][]>;
 }
 
 export function REPLInput(props: REPLInputProps) {
@@ -18,25 +17,48 @@ export function REPLInput(props: REPLInputProps) {
 
   // process the input and excutes the command
   const ProcessInput = () => {
-    // add it to the command history:
-    props.setCommandHistory([...props.commandHistory, commandString]);
-
     // get the command keyword(the first word)
     const command = commandString.split(" ")[0];
+    let loadedCSV;
+    let result;
+    let isBrief = true;
     if (command === "mode") {
       const modetype = commandString.split(" ")[1];
-      if (modetype === "brief" || modetype == "verbose") {
+      if (modetype === "brief") {
+        isBrief = true;
         props.setMode(modetype);
-        props.setresultHistory([...props.resultHistory, "Mode set!"]);
-      } else {
-        // TODO: throw errors
-      }
+        result = "Mode set!";
+      } else if (modetype === "verbose") {
+        isBrief = false;
+        props.setMode(modetype);
+        result = "Mode set!";
+      } else result = 'Invalide mode type. Must be either "brief" or "verbose"';
     } else if (command === "load_file") {
+      const filePath = commandString.split(" ")[1];
+      if (!props.CSVData.has(filePath)) {
+        result = "cannot load file, make sure to enter correct file path";
+      } else {
+        loadedCSV = props.CSVData.get(filePath);
+        result = "Loaded file successfully";
+      }
     } else if (command === "view") {
+      //   result = <td></td>
+      //    loadedCSV.map()
     } else if (command === "search") {
     } else {
       // TODO: throw error when command is not recognised.
     }
+
+    if (isBrief) {
+      props.setHistory([...props.History, result]);
+    } else {
+      props.setHistory([
+        ...props.History,
+        "Command: " + commandString,
+        "Output: " + result,
+      ]);
+    }
+
     // Clear the input box after processing the input
     setCommandString("");
   };
