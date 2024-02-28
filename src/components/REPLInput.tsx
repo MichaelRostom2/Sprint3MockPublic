@@ -8,6 +8,8 @@ interface REPLInputProps {
   mode: string;
   setMode: React.Dispatch<React.SetStateAction<string>>;
   CSVData: Map<string, string[][]>;
+  loadedCSV: string[][];
+  setloadedCSV: React.Dispatch<React.SetStateAction<string[][]>>;
 }
 
 export function REPLInput(props: REPLInputProps) {
@@ -15,12 +17,15 @@ export function REPLInput(props: REPLInputProps) {
   // Manages the contents of the input box
   const [commandString, setCommandString] = useState<string>("");
 
+  const SearchCSV = () => {
+    return "test";
+  };
+
   // process the input and excutes the command
   const ProcessInput = () => {
     // get the command keyword(the first word)
     const command = commandString.split(" ")[0];
-    let loadedCSV;
-    let result;
+    let result = "";
     let isBrief = true;
     if (command === "mode") {
       const modetype = commandString.split(" ")[1];
@@ -38,13 +43,27 @@ export function REPLInput(props: REPLInputProps) {
       if (!props.CSVData.has(filePath)) {
         result = "cannot load file, make sure to enter correct file path";
       } else {
-        loadedCSV = props.CSVData.get(filePath);
+        props.setloadedCSV(props.CSVData.get(filePath));
         result = "Loaded file successfully";
       }
     } else if (command === "view") {
       //   result = <td></td>
       //    loadedCSV.map()
     } else if (command === "search") {
+      // TODO: make sure CSV is loaded
+      const column = commandString.split(" ")[1];
+      const value = commandString.split(" ")[2];
+      if (column.length === 0) {
+        result = "please enter a column name or index";
+      } else {
+        if (!isNaN(Number(column))) {
+          // search by index
+          result = SearchCSV();
+        } else {
+          // search by column name
+          result = SearchCSV();
+        }
+      }
     } else {
       // TODO: throw error when command is not recognised.
     }

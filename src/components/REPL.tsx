@@ -5,12 +5,12 @@ import { REPLInput } from "./REPLInput";
 
 export default function REPL() {
   const [History, setHistory] = useState<string[]>([]);
-
   const [mode, setMode] = useState<string>("brief");
   const CSVData = new Map();
   CSVData.set("./data/1.csv", [["test"]]);
   CSVData.set("./data/2.csv", [["test"]]);
   CSVData.set("./data/3.csv", [["test"]]);
+  const loaded;
 
   const REPLInputVar = (
     <REPLInput

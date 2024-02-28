@@ -1,7 +1,7 @@
 import "../styles/main.css";
 
 interface REPLHistoryProps {
-  History: string[][];
+  History: string[];
 }
 // TODO: enum?
 
