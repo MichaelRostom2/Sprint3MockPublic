@@ -1,16 +1,20 @@
-import { useState } from "react";
 import "../styles/main.css";
+import { useState } from "react";
 import { REPLHistory } from "./REPLHistory";
 import { REPLInput } from "./REPLInput";
+import { DATASET_1, DATASET_2, DATASET_3 } from "./mockedJson";
 
 export default function REPL() {
   const [History, setHistory] = useState<string[]>([]);
   const [mode, setMode] = useState<string>("brief");
-  const CSVData = new Map();
-  CSVData.set("./data/1.csv", [["test"]]);
-  CSVData.set("./data/2.csv", [["test"]]);
-  CSVData.set("./data/3.csv", [["test"]]);
-  const loaded;
+  const CSVDatabase = new Map();
+
+  CSVDatabase.set("./data/1.csv", DATASET_1);
+  CSVDatabase.set("./data/2.csv", DATASET_2);
+  CSVDatabase.set("./data/3.csv", DATASET_3);
+  // TODO: try to figure out how to convert string[][] => <table> </table>
+  const [loadedCSV, setloadedCSV] = useState<string[][]>([[""]]);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const REPLInputVar = (
     <REPLInput
@@ -18,11 +22,15 @@ export default function REPL() {
       setHistory={setHistory}
       mode={mode}
       setMode={setMode}
-      CSVData={CSVData}
+      CSVDatabase={CSVDatabase}
+      loadedCSV={loadedCSV}
+      setloadedCSV={setloadedCSV}
+      isLoaded={isLoaded}
+      setIsLoaded={setIsLoaded}
     />
   );
   if (History.length === 0) {
-    // emtpy list
+    // start of the program
     return (
       <div>
         <p>Hello! Enter commands below to use this webpage</p>
