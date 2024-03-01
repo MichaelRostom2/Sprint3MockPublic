@@ -5,7 +5,7 @@ import { ControlledInput } from "./ControlledInput";
 interface REPLInputProps {
   History: string[];
   setHistory: React.Dispatch<React.SetStateAction<string[]>>;
-  mode: string;
+  mode: String;
   setMode: React.Dispatch<React.SetStateAction<string>>;
   CSVDatabase: Map<string, string[][]>;
   loadedCSV: string[][];
@@ -21,61 +21,85 @@ interface REPLInputProps {
  * *NOT* contain the command-name prefix.
  */
 export interface REPLFunction {
-  (args: Array<string>): String | String[][];
+  (args: Array<string>): string;
 }
 
 export function REPLInput(props: REPLInputProps) {
   const [commandString, setCommandString] = useState<string>("");
   const commandMap: Record<string, REPLFunction> = {};
-  commandMap["hi"] = (args) => "t232est";
+
+  commandMap["mode"] = modeCommand;
+  const Colors = Object.freeze({
+    RED: "red",
+    GREEN: "green",
+    BLUE: "blue",
+  });
+  commandMap["load_file"] = loadFileCommand;
+  commandMap["view"] = viewCommand;
+  commandMap["search"] = searchCommand;
+
+  function modeCommand(args: string[]): string {
+    let result = "";
+    const modetype = args[0];
+    if (!(modetype === "brief" || modetype === "verbose")) {
+      result =
+        '<span>Invalide mode type. Must be either "brief" or "verbose"</span>';
+    } else {
+      props.setMode(modetype);
+      result = "<span>Mode set!</span>";
+    }
+    return result;
+  }
+  function loadFileCommand(args: string[]): string {
+    let result = "";
+    const filePath = args[0];
+    if (!props.CSVDatabase.has(filePath)) {
+      result =
+        "<span>cannot load file, make sure to enter correct file path</span>";
+    } else {
+      props.setloadedCSV(props.CSVDatabase.get(filePath)!);
+      props.setIsLoaded(true);
+      result = "<span>Loaded file successfully</span>";
+    }
+    return result;
+  }
+  function viewCommand(args: string[]): string {
+    if (!props.isLoaded) {
+      return "<span>Please load a file first</span>";
+    } else {
+      return generateHTMLTable(props.loadedCSV);
+    }
+  }
+  function searchCommand(args: string[]): string {
+    let result = "";
+    if (!props.isLoaded) {
+      result = "<span>Please load a file first</span>";
+    } else {
+      const column = args[0];
+      const value = args[1];
+      if (column.length === 0) {
+        result = "<span>Please enter a column name or index</span>";
+      } else {
+        if (!isNaN(Number(column))) {
+          // search by index
+          result = SearchCSV(value);
+        } else {
+          // search by column name
+          result = SearchCSV(value);
+        }
+      }
+    }
+    return result;
+  }
 
   /* process the input and excutes the command */
   const ProcessInput = () => {
-    // get the command keyword(the first word)
-    const command = commandString.split(" ")[0];
-    console.log(commandMap[command]([commandString.slice(1)]));
+    const commandList = commandString.split(" ");
     let result = "";
-    if (command === "mode") {
-      const modetype = commandString.split(" ")[1];
-      if (!(modetype === "brief" || modetype === "verbose")) {
-        result =
-          '<span>Invalide mode type. Must be either "brief" or "verbose"</span>';
-      } else {
-        props.setMode(modetype);
-        result = "<span>Mode set!</span>";
-      }
-    } else if (command === "load_file") {
-      const filePath = commandString.split(" ")[1];
-      if (!props.CSVDatabase.has(filePath)) {
-        result =
-          "<span>cannot load file, make sure to enter correct file path</span>";
-      } else {
-        props.setloadedCSV(props.CSVDatabase.get(filePath)!);
-        props.setIsLoaded(true);
-        result = "<span>Loaded file successfully</span>";
-      }
-    } else if (command === "view") {
-      result = generateHTMLTable(props.loadedCSV);
-    } else if (command === "search") {
-      if (!props.isLoaded) {
-        result = "<span>Please load a file first</span>";
-      } else {
-        const column = commandString.split(" ")[1];
-        const value = commandString.split(" ")[2];
-        if (column.length === 0) {
-          result = "<span>Please enter a column name or index</span>";
-        } else {
-          if (!isNaN(Number(column))) {
-            // search by index
-            result = SearchCSV(value);
-          } else {
-            // search by column name
-            result = SearchCSV(value);
-          }
-        }
-      }
+    if (commandList[0] in commandMap) {
+      result = commandMap[commandList[0]](commandList.slice(1));
     } else {
-      // TODO: throw error when command is not recognised.
+      result = "Command not recognized";
     }
 
     /* add the command and result to history */
@@ -88,12 +112,11 @@ export function REPLInput(props: REPLInputProps) {
         "Output: " + result,
       ]);
     }
-
     // Clear the input box after processing the input
     setCommandString("");
   };
   function SearchCSV(value: string): string {
-    return "test";
+    return "Retrived  value from Y file";
     // TODO: implement return function type
   }
   function generateHTMLTable(data: string[][]): string {
@@ -107,8 +130,8 @@ export function REPLInput(props: REPLInputProps) {
       html += "</tr>";
     }
     return html;
-    // TODO: figure out the styling of the table
   }
+
   return (
     <div className="repl-input">
       <fieldset>

@@ -2,7 +2,7 @@ import "../styles/main.css";
 import { useState } from "react";
 import { REPLHistory } from "./REPLHistory";
 import { REPLInput } from "./REPLInput";
-import { DATASET_1, DATASET_2, DATASET_3 } from "./mockedJson";
+import { DATASET_1, DATASET_2, DATASET_3 } from "../Data/mockedJson";
 
 export default function REPL() {
   const [History, setHistory] = useState<string[]>([]);
@@ -12,7 +12,6 @@ export default function REPL() {
   CSVDatabase.set("./data/1.csv", DATASET_1);
   CSVDatabase.set("./data/2.csv", DATASET_2);
   CSVDatabase.set("./data/3.csv", DATASET_3);
-  // TODO: try to figure out how to convert string[][] => <table> </table>
   const [loadedCSV, setloadedCSV] = useState<string[][]>([[""]]);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
