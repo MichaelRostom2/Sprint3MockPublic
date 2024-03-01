@@ -48,35 +48,27 @@ export default function REPL() {
       setIsLoaded={setIsLoaded}
     />
   );
-  if (History.length === 9) {
-    // Start of the program indicated by empty history
-    return (
-      <div>
-        <p>Hello! Enter commands below to use this webpage</p>
-        <p>Enter mode brief to have only results show in history</p>
-        <p>Enter mode verbose to have both command and results show history</p>
-        <p>Other supported commands:</p>
-        <ul>
-          <li>
-            load_file: for loading a CSV file. Arguments: file_path - the path
-            to the file
-          </li>
-          <li>view: for viewing a loaded CSV file. Arguments: none</li>
-          <li>
-            search: for searching a loaded CSV file. Arguments: (index/column) -
-            to specify index/column to search in, value - the value to search
-            for enter{" "}
-          </li>
-        </ul>
-        {REPLInputVar}
-      </div>
-    );
-  } else {
-    return (
-      <div className="repl">
-        <REPLHistory History={History} />
-        {REPLInputVar}
-      </div>
-    );
-  }
+  return (
+    <div className="repl">
+      <p>Hello! Enter commands below to use this webpage</p>
+      <p>Enter mode brief to have only results show in history</p>
+      <p>Enter mode verbose to have both command and results show history</p>
+      <p>Other supported commands:</p>
+      <ul>
+        <li>
+          load_file: for loading a CSV file. Arguments: file_path - the path to
+          the file
+        </li>
+        <li>view: for viewing a loaded CSV file. Arguments: none</li>
+        <li>
+          search: for searching a loaded CSV file. Arguments: (index/column) -
+          to specify index/column to search in, value - the value to search for
+          enter{" "}
+        </li>
+      </ul>
+      <h3> History: </h3>
+      <REPLHistory History={History} />
+      {REPLInputVar}
+    </div>
+  );
 }
